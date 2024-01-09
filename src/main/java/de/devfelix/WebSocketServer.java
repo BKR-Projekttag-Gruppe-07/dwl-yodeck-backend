@@ -16,7 +16,7 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
-        System.out.println("Neue Verbindung von " + webSocket.getRemoteSocketAddress().getAddress().getHostAddress());
+        System.out.println("Neue Verbindung zu " + webSocket.getRemoteSocketAddress().getAddress().getHostAddress());
         connection = webSocket;
     }
 
