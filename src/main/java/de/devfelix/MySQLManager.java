@@ -1,19 +1,22 @@
 package de.devfelix;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MySQLManager {
-    private static final String url = "jdbc:mysql://localhost:3306/dwlscreen";
+    private static final String url = "jdbc:mysql://localhost:3306/";
     private static final String username = "dwluser";
     private static final String password = "Hallo.123";
 
     private static Connection connect() {
         try {
-            return DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(url, username, password);
+
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("CREATE DATABASE IF NOT EXISTS dwlscreen");
+            }
+
+            return DriverManager.getConnection(url + "dwlscreen", username, password);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
