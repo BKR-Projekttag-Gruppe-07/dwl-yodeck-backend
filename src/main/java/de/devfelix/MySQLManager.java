@@ -17,13 +17,16 @@ public class MySQLManager {
                     statement.executeUpdate("CREATE DATABASE IF NOT EXISTS dwlscreen");
                 }
 
-                return DriverManager.getConnection(url + "dwlscreen", username, password);
+                Connection dbConnection = DriverManager.getConnection(url + "dwlscreen", username, password);
+                System.out.println("Verbindungsaufbau zur Datenbank war erfolgreich.");
+                return dbConnection;
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("Verbindungsaufbau zur Datenbank fehlgeschlagen: " + e.getMessage());
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
+                    System.out.println("Verbindungsversuch wurde unterbrochen.");
                     return null;
                 }
             }
