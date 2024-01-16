@@ -20,13 +20,35 @@ public class Employee {
     }
 
     public static ArrayList<Employee> getCurrentEmployees() {
+        ArrayList<Employee> returnValue = new ArrayList<>();
+
         String sqlStatement = "SELECT * FROM mitarbeiter";
         List<Map<String, Object>> unformattedEmployees = MySQLManager.executeQuery(sqlStatement);
 
         for(Map<String, Object> employees : unformattedEmployees) {
-            System.out.println(employees);
+            Employee employee = new Employee(null, null, null, null, 0);
+            for (Map.Entry<String, Object> entry : employees.entrySet()) {
+                switch (entry.getKey()) {
+                    case "Vorname":
+                        employee.setFirstname(entry.getValue().toString());
+                        break;
+                    case "Nachname":
+                        employee.setName(entry.getValue().toString());
+                        break;
+                    case "Geburtstag":
+                        employee.setBirthday(entry.getValue().toString());
+                        break;
+                    case "Anstelldatum":
+                        employee.setHiringDate(entry.getValue().toString());
+                        break;
+                    case "ID":
+                        employee.setId(Integer.parseInt(entry.getKey().toString()));
+                        break;
+                }
+            }
+            returnValue.add(employee);
         }
-        return null;
+        return returnValue;
     }
 
     public String getFirstname() {
