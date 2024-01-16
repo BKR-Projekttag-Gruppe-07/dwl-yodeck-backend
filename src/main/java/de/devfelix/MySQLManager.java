@@ -9,19 +9,25 @@ public class MySQLManager {
     private static final String password = "Hallo.123";
 
     private static Connection connect() {
-        try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+        while (true) {
+            try {
+                Connection connection = DriverManager.getConnection(url, username, password);
 
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("CREATE DATABASE IF NOT EXISTS dwlscreen");
+                try (Statement statement = connection.createStatement()) {
+                    statement.executeUpdate("CREATE DATABASE IF NOT EXISTS dwlscreen");
+                }
+
+                return DriverManager.getConnection(url + "dwlscreen", username, password);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
             }
-
-            return DriverManager.getConnection(url + "dwlscreen", username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
         }
-    }
 
     public static List<Map<String, Object>> executeQuery(String query) {
         List<Map<String, Object>> resultList = new ArrayList<>();
