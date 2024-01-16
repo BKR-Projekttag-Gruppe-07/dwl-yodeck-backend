@@ -31,6 +31,7 @@ public class MySQLManager {
                 }
             }
         }
+    }
 
     public static List<Map<String, Object>> executeQuery(String query) {
         List<Map<String, Object>> resultList = new ArrayList<>();
