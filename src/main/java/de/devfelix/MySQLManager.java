@@ -26,7 +26,7 @@ public class MySQLManager {
                     Thread.sleep(5000);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    System.out.println("Verbindungsversuch wurde unterbrochen.");
+                    System.out.println("Verbindungsaufbau wurde unterbrochen.");
                     return null;
                 }
             }
