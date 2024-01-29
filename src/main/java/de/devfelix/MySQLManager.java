@@ -1,10 +1,10 @@
 package de.devfelix;
-
+import java.sql.DriverManager;
 import java.sql.*;
 import java.util.*;
 
 public class MySQLManager {
-    private static final String url = "jdbc:mysql://localhost:3306/";
+    private static final String url = "jdbc:mysql://172.168.0.2:3306/";
     private static final String username = "dwluser";
     private static final String password = "Hallo.123";
 

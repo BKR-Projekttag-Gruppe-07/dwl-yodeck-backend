@@ -42,7 +42,7 @@ public class Employee {
                         employee.setHiringDate(entry.getValue().toString());
                         break;
                     case "ID":
-                        employee.setId(Integer.parseInt(entry.getKey().toString()));
+                        employee.setId(Integer.parseInt(entry.getValue().toString()));
                         break;
                 }
             }
@@ -51,10 +51,10 @@ public class Employee {
         return returnValue;
     }
 
+
     public String getFirstname() {
         return firstname;
     }
-
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }

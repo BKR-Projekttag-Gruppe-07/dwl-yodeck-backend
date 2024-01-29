@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
-    WebSocket connection;
+    private ArrayList<WebSocket> connections = new ArrayList<>();
 
     public WebSocketServer(int port) {
         super(new InetSocketAddress(port));
@@ -17,23 +17,26 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         System.out.println("Neue Verbindung zu " + webSocket.getRemoteSocketAddress().getAddress().getHostAddress());
-        connection = webSocket;
+        connections.add(webSocket);
     }
 
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         System.out.println("Verbindung geschlossen zu: " + webSocket.getRemoteSocketAddress().getAddress().getHostAddress());
-        connection = null;
+        connections.remove(webSocket);
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String s) {
 
+        System.out.println("Empfangener String: " + s);
+
+        broadcastMessage(s);
     }
 
     @Override
     public void onError(WebSocket webSocket, Exception e) {
-
+        e.printStackTrace();
     }
 
     @Override
@@ -41,16 +44,10 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
         System.out.println("WebSocket Server gestartet");
     }
 
-
-    private void sendString(ArrayList<String> data) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(String string : data) {
-            stringBuilder.append(string + ";");
+    private void broadcastMessage(String message) {
+        for (WebSocket connection : connections) {
+            connection.send(message);
         }
-
-        connection.send(stringBuilder.toString());
-        System.out.println("Sende Datenstring: " + stringBuilder.toString());
+        System.out.println("Sende Datenstring an alle Clients: " + message);
     }
-
 }
