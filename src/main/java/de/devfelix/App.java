@@ -1,10 +1,16 @@
 package de.devfelix;
 
 import de.devfelix.util.Employee;
+import de.jollyday.Holiday;
+import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameters;
 
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class App {
 
@@ -26,15 +32,29 @@ public class App {
         }
     }
 
-    public static void clearObjectsAtWeek() {
-        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+    private static void clearObjectsAtWeek() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek dayOfWeek = today.getDayOfWeek();
 
-        if (dayOfWeek.compareTo(DayOfWeek.TUESDAY) >= 0 && dayOfWeek.compareTo(DayOfWeek.FRIDAY) <= 0) {
+        if (isWeekday(dayOfWeek) || isHoliday(today)) {
             displayedObjects.clear();
             System.out.println("Die Liste wurde gelöscht");
         } else {
             System.out.println("Die Liste wurde nicht gelöscht");
         }
+    }
+
+    private static boolean isWeekday(DayOfWeek dayOfWeek) {
+        return dayOfWeek.compareTo(DayOfWeek.TUESDAY) >= 0 && dayOfWeek.compareTo(DayOfWeek.FRIDAY) <= 0;
+    }
+
+
+    private static boolean isHoliday(LocalDate date) {
+        HolidayManager manager = HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY));
+        Set<LocalDate> holidays = manager.getHolidays(date.getYear()).stream()
+                .map(Holiday::getDate)
+                .collect(Collectors.toSet());
+        return holidays.contains(date);
     }
 
     public static void sendObjects() {
