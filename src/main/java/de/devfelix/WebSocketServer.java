@@ -28,7 +28,6 @@ public class WebSocketServer extends org.java_websocket.server.WebSocketServer {
 
     @Override
     public void onMessage(WebSocket webSocket, String s) {
-
         System.out.println("Empfangener String: " + s);
 
         broadcastMessage(s);

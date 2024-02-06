@@ -16,7 +16,7 @@ public class App {
 
     static WebSocketServer server = new WebSocketServer(8887);
     static List<String> displayedObjects = new ArrayList<>();
-    static final int MILLISECONDS_TO_SLEEP = 2500;
+    static final int MILLISECONDS_TO_SLEEP = 3500;
 
     public static void main(String[] args) {
         server.start();
@@ -58,44 +58,44 @@ public class App {
     }
 
     public static void sendObjects() {
-        for (String displayedObject : displayedObjects) {
-            System.out.println(displayedObject);
-            if (displayedObjects.isEmpty()) {
-                server.broadcast("Hier Könnte;Ihre;werbung;stehen");
-            } else {
+        if (displayedObjects.isEmpty()) {
+            server.broadcast("Heute stehen keine;Geburtstage oder Jubileen;an");
+            System.out.println("Heute stehen keine;Geburtstage oder Jubileen;an");
+        } else {
+            for (String displayedObject : displayedObjects) {
                 System.out.println(displayedObject);
                 server.broadcast(displayedObject);
-            }
-
-            try {
-                Thread.sleep(MILLISECONDS_TO_SLEEP);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
+                try {
+                    Thread.sleep(MILLISECONDS_TO_SLEEP);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
             }
         }
+
     }
+
 
     public static void getDisplayedObjects() {
         for (Employee employee : Employee.getCurrentEmployees()) {
             if (isBirthdayToday(employee)) {
-                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + ";" + employee.getName() +";zum Geburtstag");
+                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + " " + employee.getName() +";zum Geburtstag");
             }
 
             LocalDate hiringDate = LocalDate.parse(employee.getHiringDate());
 
             if (isJubileeToday(hiringDate)) {
                 Duration duration = Duration.between(hiringDate.atStartOfDay(), LocalDate.now().atStartOfDay());
-                long years = duration.toDays() / 365;
-
-                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + ";" + employee.getName() + ";zum " +
-                        years + " Jährigem Jubiläum");
+                int years = (int) (duration.toDays() / 365);
+                String tempYears = checkIfIsSmaller(years);
+                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + " " + employee.getName() + ";zum " +
+                        tempYears + "jährigen Jubiläum");
             }
         }
 
         if (displayedObjects.isEmpty()) {
             System.out.println("!!! Heute kommt nichts !!!\n");
-            server.broadcast("Heute stehen;Keine ;Ereignisse oder;Geburtstage an");
         } else {
             System.out.println("Die Liste wurde Beschrieben\n");
         }
@@ -115,5 +115,16 @@ public class App {
     private static boolean isMidnight() {
         LocalDateTime now = LocalDateTime.now();
         return now.toLocalTime().equals(LocalTime.MIDNIGHT);
+    }
+
+    private static String checkIfIsSmaller(int years) {
+        String[] numbers = {"Null","eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf"};
+        String year;
+        if (years <= numbers.length) {
+            year = numbers[years];
+        } else {
+            year = Integer.toString(years)+" ";
+        }
+        return year;
     }
 }
