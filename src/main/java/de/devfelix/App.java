@@ -20,14 +20,10 @@ public class App {
 
     public static void main(String[] args) {
         server.start();
-        clearObjectsAtWeek();
-        getDisplayedObjects();
 
         while (true) {
-            if (isMidnight()) {
-                clearObjectsAtWeek();
-                getDisplayedObjects();
-            }
+            clearObjectsAtWeek();
+            getDisplayedObjects();
             sendObjects();
         }
     }
@@ -61,6 +57,12 @@ public class App {
         if (displayedObjects.isEmpty()) {
             server.broadcast("Heute stehen keine;Geburtstage oder Jubileen;an");
             System.out.println("Heute stehen keine;Geburtstage oder Jubileen;an");
+            try {
+                Thread.sleep(MILLISECONDS_TO_SLEEP);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
         } else {
             for (String displayedObject : displayedObjects) {
                 System.out.println(displayedObject);
@@ -80,7 +82,10 @@ public class App {
     public static void getDisplayedObjects() {
         for (Employee employee : Employee.getCurrentEmployees()) {
             if (isBirthdayToday(employee)) {
-                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + " " + employee.getName() +";zum Geburtstag");
+                String birthdayMessage = "Herzlichen Glückwunsch;" + employee.getFirstname() + " " + employee.getName() + ";zum Geburtstag!";
+                if (!displayedObjects.contains(birthdayMessage)) {
+                displayedObjects.add(birthdayMessage);
+                }
             }
 
             LocalDate hiringDate = LocalDate.parse(employee.getHiringDate());
@@ -89,8 +94,11 @@ public class App {
                 Duration duration = Duration.between(hiringDate.atStartOfDay(), LocalDate.now().atStartOfDay());
                 int years = (int) (duration.toDays() / 365);
                 String tempYears = checkIfIsSmaller(years);
-                displayedObjects.add("Herzlichen Glückwunsch;"+employee.getFirstname() + " " + employee.getName() + ";zum " +
-                        tempYears + "jährigen Jubiläum");
+                String jubileeMessage = "Herzlichen Glückwunsch;" + employee.getFirstname() + " " + employee.getName() + ";zum " +
+                        tempYears + "jährigen Jubiläum!";
+                if (!displayedObjects.contains(jubileeMessage)) {
+                    displayedObjects.add(jubileeMessage);
+                }
             }
         }
 
@@ -112,10 +120,6 @@ public class App {
                 hiringDate.getDayOfMonth() == LocalDate.now().getDayOfMonth();
     }
 
-    private static boolean isMidnight() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.toLocalTime().equals(LocalTime.MIDNIGHT);
-    }
 
     private static String checkIfIsSmaller(int years) {
         String[] numbers = {"Null","eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf"};
@@ -123,7 +127,7 @@ public class App {
         if (years <= numbers.length) {
             year = numbers[years];
         } else {
-            year = Integer.toString(years)+" ";
+            year = Integer.toString(years)+"-";
         }
         return year;
     }
